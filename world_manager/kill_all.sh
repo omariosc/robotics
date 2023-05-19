@@ -1,0 +1,6 @@
+pkill -f "gzclient"
+pkill -f "gazebo"
+pkill -f "gzserver"
+pkill -f "rviz"
+pkill -f "roscore"
+pkill -f "rosmaster"

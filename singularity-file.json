@@ -1,0 +1,22 @@
+{
+  "data": {
+    "attributes": {
+      "environment": {
+        "/.singularity.d/env/10-docker2singularity.sh": "#!/bin/sh\nexport PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"",
+        "/.singularity.d/env/90-environment.sh": "#!/bin/sh\n# Custom environment shell code should follow\n\n\n    export ROS_VERSION=noetic\n    export LANG=C.UTF-8\n    export LC_ALL=C.UTF-8\n    export GAZEBO_CATKIN_WS=/opt/ros/$ROS_VERSION/catkin_ws\n    export SINGULARITY_ROS=1\n    unset SESSION_MANAGER   # This fixes an issue with xterm warning"
+      },
+      "labels": {
+        "AUTHOR": "Rafael Papallas (rpapallas.com)",
+        "org.label-schema.build-date": "Tuesday_31_January_2023_17:8:23_GMT",
+        "org.label-schema.schema-version": "1.0",
+        "org.label-schema.usage.singularity.deffile.bootstrap": "docker",
+        "org.label-schema.usage.singularity.deffile.from": "ubuntu:20.04",
+        "org.label-schema.usage.singularity.version": "3.6.3"
+      },
+      "runscript": "#!/bin/sh\nOCI_ENTRYPOINT=''\nOCI_CMD='\"bash\"'\nCMDLINE_ARGS=\"\"\n# prepare command line arguments for evaluation\nfor arg in \"$@\"; do\n    CMDLINE_ARGS=\"${CMDLINE_ARGS} \\\"$arg\\\"\"\ndone\n\n# ENTRYPOINT only - run entrypoint plus args\nif [ -z \"$OCI_CMD\" ] \u0026\u0026 [ -n \"$OCI_ENTRYPOINT\" ]; then\n    if [ $# -gt 0 ]; then\n        SINGULARITY_OCI_RUN=\"${OCI_ENTRYPOINT} ${CMDLINE_ARGS}\"\n    else\n        SINGULARITY_OCI_RUN=\"${OCI_ENTRYPOINT}\"\n    fi\nfi\n\n# CMD only - run CMD or override with args\nif [ -n \"$OCI_CMD\" ] \u0026\u0026 [ -z \"$OCI_ENTRYPOINT\" ]; then\n    if [ $# -gt 0 ]; then\n        SINGULARITY_OCI_RUN=\"${CMDLINE_ARGS}\"\n    else\n        SINGULARITY_OCI_RUN=\"${OCI_CMD}\"\n    fi\nfi\n\n# ENTRYPOINT and CMD - run ENTRYPOINT with CMD as default args\n# override with user provided args\nif [ $# -gt 0 ]; then\n    SINGULARITY_OCI_RUN=\"${OCI_ENTRYPOINT} ${CMDLINE_ARGS}\"\nelse\n    SINGULARITY_OCI_RUN=\"${OCI_ENTRYPOINT} ${OCI_CMD}\"\nfi\n\n# Evaluate shell expressions first and set arguments accordingly,\n# then execute final command as first container process\neval \"set ${SINGULARITY_OCI_RUN}\"\nexec \"$@\"",
+      "deffile": "bootstrap:docker\nFrom:ubuntu:20.04\n\n%labels\n\nAUTHOR Rafael Papallas (rpapallas.com)\n\n%environment\n    export ROS_VERSION=noetic\n    export LANG=C.UTF-8\n    export LC_ALL=C.UTF-8\n    export GAZEBO_CATKIN_WS=/opt/ros/$ROS_VERSION/catkin_ws\n    export SINGULARITY_ROS=1\n    unset SESSION_MANAGER   # This fixes an issue with xterm warning\n%files\n  files/virtualgl_2.5.2_amd64.deb /opt\n  recipe.sh\n\n%post\n  /recipe.sh\n",
+      "startscript": "#!/bin/sh"
+    }
+  },
+  "type": "container"
+}

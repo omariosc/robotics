@@ -1,0 +1,8 @@
+<launch>
+  <node name="move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+
+    <!-- Load the parameters from the YAML file -->
+    <rosparam file="$(group_project)/config/costmap_parameters.yaml" command="load" />
+
+  </node>
+</launch>
